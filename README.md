@@ -66,3 +66,21 @@ The success of business depends upon how well you understand your customers. Let
 
 Our biggest customers are from Sao Paulo. And our top 5 list cities are also one of the largest cities in Brazil. And the capital city Brasilia in 4th place on the list of our total customers.
 
+## 11. Best City by Revenue Each Year
+![image](https://user-images.githubusercontent.com/80149518/174266285-2918b81d-4919-40c8-abd2-f5c263ce3e2a.png)
+
+Since our customers are mostly from Sao Paulo, It does make sense that Sao Paulo has the highest revenue compare to another cities in Brazil
+
+## 12. Delivery Success Rate by Year
+![image](https://user-images.githubusercontent.com/80149518/174269596-de1dc0bf-d09c-4087-ab2c-105dd9cbfc54.png)
+
+In 2016 there was total 5 orders that did not delivered, with delivery failure rate only 2% and delivery success rate 98%. In 2017 100% orders are delivered to the customers, and in 2018 there was only 1 order that did not delivered
+
+## 13. Customer Satisfication - Perfect Rating
+![image](https://user-images.githubusercontent.com/80149518/174270879-77985079-b282-4fa4-92f0-245add143d1b.png)
+
+- In 2016 customers that given a perfect rating up to 57%
+- In 2017 customers that given a perfecet rating up to 60%
+- In 2018 ustomers that given a perfecet rating up to 59%
+
+There is a increase number by 1% from 2016 to 2017 and decreasing number from 2017 to 2018 by 1%
