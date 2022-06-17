@@ -34,13 +34,13 @@ Since we have only 3 months data in 2016, it does make sense that we only have 2
 
 ![This is an image](https://github.com/firdanrastama/Data-Analysis-Project--SQL/blob/main/images/transactions_per_month.png)
 
-August is the highest number of transactions. How about the revenue? Is our best month for revenue also August? Let's investigate our total revenue per month from 2016 to 2018
+August is the highest number of transactions. How about the revenue? Is our best month by revenue also August? Let's investigate our total revenue per month from 2016 to 2018
 
 ## 4. Revenue per Month from 2016 to 2018
 
 ![This is an image](https://github.com/firdanrastama/Data-Analysis-Project--SQL/blob/main/images/revenue.png)
 
-Based on the figure we can see that May is the most highest revenue from 2017 to 2018 *not include 2016 since only has 3 months data*. The difference for May and August is only 270 away. Since May is the most highest revenue, let's see what are the most items that our customers ordered in May
+Based on the figure we can see that May is the most highest revenue from 2017 to 2018 *not include 2016 since only has 3 months data*. Since May is the most highest revenue, let's see what are the most items that our customers ordered in May
 
 ## 5. Top 15 Items Sold in May from 2017 to 2018
 
@@ -87,4 +87,4 @@ In 2016 there was total 5 orders that did not delivered, with delivery failure r
 - In 2017 customers that given a perfecet rating up to 60%
 - In 2018 ustomers that given a perfecet rating up to 59%
 
-There is a increase number by 1% from 2016 to 2017 and decreasing number from 2017 to 2018 by 1%
+There is an increase number by 1% from 2016 to 2017 and decreasing number from 2017 to 2018 by 1%
