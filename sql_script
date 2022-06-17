@@ -57,7 +57,6 @@ SELECT DATE_TRUNC('week', order_purchase_timestamp) :: DATE AS date,
   FROM orders o
   JOIN payments p
   	ON o.order_id = p.order_id
--- Keep only the records in June 2018
 WHERE DATE_TRUNC('month', order_purchase_timestamp) = '2017-05-01'
 GROUP BY 1
 ORDER BY 1;
@@ -69,7 +68,6 @@ SELECT DATE_TRUNC('week', order_purchase_timestamp) :: DATE AS date,
   FROM orders o
   JOIN payments p
   	ON o.order_id = p.order_id
--- Keep only the records in June 2018
 WHERE DATE_TRUNC('month', order_purchase_timestamp) = '2017-05-01'
 GROUP BY 1
 ORDER BY 1;
