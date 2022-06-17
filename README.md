@@ -15,7 +15,8 @@ Link for the PostgreSQL script: [SQL Script](https://github.com/firdanrastama/Da
 ## 1. Sales Performance by Year
 This dataset contains orders information from 2016 to 2018. Let's see if there is an increase in sales from 2016 to 2018
 
-![This is an image](https://raw.githubusercontent.com/firdanrastama/Data-Analysis-Project--SQL/main/sales_per_year.png)
+![image](https://user-images.githubusercontent.com/80149518/174345661-a27f14ab-14c3-4238-ad74-9aab0d8c3eb4.png)
+
 
 We can see in the figure that from 2016 to 2017 there is an increase on sales by 121% and from 2017 to 2018 there is a increase on sales by 20%. Since 121% is a massive increase we will try to investigate sales performance in 2016 and 2017. Let's investigate on monthly sales
 
