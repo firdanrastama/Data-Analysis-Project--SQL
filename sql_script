@@ -1,0 +1,234 @@
+1. Sales Performance by Year
+SELECT
+	EXTRACT(YEAR FROM order_purchase_timestamp) AS year,
+	SUM(payment_value) AS revenue
+FROM payments p
+INNER JOIN orders o
+	ON p.order_id = o.order_id
+GROUP BY year
+
+2. Customers Transactions per Year
+SELECT 
+  EXTRACT(YEAR FROM order_purchase_timestamp) AS year, 
+  COUNT(DISTINCT customer_id) AS "number of customer"
+FROM orders 
+WHERE order_status = 'delivered' 
+GROUP BY 1;
+
+3. Customers Transactions per Month from 2016 to 2018
+SELECT
+	to_char(order_purchase_timestamp, 'Month') AS Month,
+	COUNT(order_id) AS frequency
+FROM orders
+GROUP BY Month
+ORDER BY 2 DESC;
+
+4. Revenue per Month from 2016 to 2018
+SELECT
+	to_char(order_purchase_timestamp, 'Month') AS month,
+	SUM(payment_value) AS revenue
+FROM orders o
+INNER JOIN payments p
+	ON o.order_id = p.order_id
+GROUP BY month
+ORDER BY 2 DESC;
+
+5. Top 15 Items Sold in May from 2017 to 2018
+SELECT EXTRACT(MONTH FROM o.order_purchase_timestamp) AS month, 
+	   pe.product_category_name_english AS product,
+	   COUNT(o.order_id) AS orders_number
+FROM orders o
+INNER JOIN order_items oi
+	ON o.order_id = oi.order_id
+INNER JOIN products p
+	ON oi.product_id = p.product_id
+INNER JOIN product_in_english pe
+	ON p.product_category_name = pe.product_category_name
+WHERE EXTRACT(MONTH FROM o.order_purchase_timestamp) = 5
+group by 1, 2
+order by 3 desc
+limit 15;
+
+6. Revenue per Week in May 2017 and May 2018
+-- 2017
+SELECT DATE_TRUNC('week', order_purchase_timestamp) :: DATE AS date,
+       -- Calculate revenue
+       SUM(payment_value) AS revenue
+  FROM orders o
+  JOIN payments p
+  	ON o.order_id = p.order_id
+-- Keep only the records in June 2018
+WHERE DATE_TRUNC('month', order_purchase_timestamp) = '2017-05-01'
+GROUP BY 1
+ORDER BY 1;
+
+-- 2018
+SELECT DATE_TRUNC('week', order_purchase_timestamp) :: DATE AS date,
+       -- Calculate revenue
+       SUM(payment_value) AS revenue
+  FROM orders o
+  JOIN payments p
+  	ON o.order_id = p.order_id
+-- Keep only the records in June 2018
+WHERE DATE_TRUNC('month', order_purchase_timestamp) = '2017-05-01'
+GROUP BY 1
+ORDER BY 1;
+
+7. Customer Acquisition per Month
+WITH reg_dates AS (
+  SELECT
+    customer_id,
+    MIN(order_purchase_timestamp) AS reg_date
+  FROM orders
+  GROUP BY customer_id)
+
+SELECT
+  -- Count the unique user IDs by registration month
+  (date_trunc('month',reg_date ::date) + interval '1 month' - interval '1 day') ::date AS month,
+   count(distinct(customer_id)) AS new_customers
+FROM reg_dates
+GROUP BY month
+ORDER BY month;
+
+8. Total Customers Over the Year
+
+WITH reg_dates AS (
+  SELECT
+    customer_id,
+    MIN(order_purchase_timestamp) AS reg_date
+  FROM orders
+  GROUP BY customer_id),
+
+  regs AS (
+  SELECT
+    DATE_TRUNC('month', reg_date) :: DATE AS month,
+    COUNT(DISTINCT customer_id) AS regs
+  FROM reg_dates
+  GROUP BY month)
+
+SELECT
+  -- Calculate the registrations running total by month
+  month,
+  SUM(regs) OVER (ORDER BY month ) AS regs_running_total
+FROM regs
+-- Order by month in ascending order
+ORDER BY month ASC;
+
+9. Growth Customers
+
+-- Customers growth rate
+WITH mau AS (
+  SELECT
+    DATE_TRUNC('month', order_purchase_timestamp) :: DATE AS month,
+    COUNT(DISTINCT customer_id) AS mau
+  FROM orders
+  GROUP BY month),
+
+  mau_with_lag AS (
+  SELECT
+    month,
+    mau,
+    GREATEST(
+      LAG(mau) OVER (ORDER BY month ASC),
+    1) AS last_mau
+  FROM mau)
+
+SELECT
+  month,
+  ROUND(
+    (mau - last_mau) :: NUMERIC / last_mau,
+  2) AS growth
+FROM mau_with_lag
+-- Order by month in ascending order
+ORDER BY month
+
+
+10. Top 5 Total Customers per City
+SELECT customer_city, 
+	COUNT(customer_city) as total_customers
+FROM customers
+GROUP BY customer_city
+ORDER BY total_customers desc
+limit 5
+
+11. Best City by Revenue Each Year
+
+CREATE TEMP TABLE best_city AS
+	SELECT 
+		EXTRACT(YEAR FROM order_purchase_timestamp) AS year,
+		customer_city AS city,
+		SUM(payment_value) AS revenue
+	FROM payments p
+	INNER JOIN orders o
+		ON o.order_id = p.order_id
+	INNER JOIN customers c
+		ON o.customer_id = c.customer_id
+	GROUP BY 1,2;
+
+(SELECT
+	year,
+	city,
+	MAX(revenue) AS revenue
+FROM best_city
+WHERE year = 2016
+GROUP BY 1,2
+ORDER BY MAX(revenue) DESC
+LIMIT 1)
+
+UNION 
+(SELECT
+	year,
+	city,
+	MAX(revenue) AS revenue
+FROM best_city
+WHERE year = 2017
+GROUP BY 1,2
+ORDER BY MAX(revenue) DESC
+LIMIT 1)
+UNION
+
+(SELECT
+	year,
+	city,
+	MAX(revenue) AS revenue
+FROM best_city
+WHERE year = 2018
+GROUP BY 1,2
+ORDER BY MAX(revenue) DESC
+LIMIT 1)
+
+12. Delivery Success Rate by Year
+SELECT
+	EXTRACT(YEAR FROM order_delivered_customer_date) as year,
+	SUM(CASE WHEN o.order_status = 'delivered' THEN 1 ELSE 0 END) AS delivered,
+	SUM(CASE WHEN o.order_status != 'delivered' THEN 1 ELSE 0 END) as not_delivered,
+	100-100*ROUND(ROUND(SUM(CASE WHEN o.order_status !='delivered'
+	THEN 1 ELSE 0 END),2) / ROUND(COUNT(o.order_status),2),2) AS delivery_success_rate,
+	100*ROUND(ROUND(SUM(CASE WHEN o.order_status != 'delivered' 
+	THEN 1 ELSE 0 END),2)/ROUND(COUNT(o.order_status),2),2) AS delivery_failure_rate
+	
+FROM customers c
+INNER JOIN orders o 
+	on o.customer_id = c.customer_id
+WHERE EXTRACT(YEAR FROM order_delivered_customer_date) IS NOT NULL
+GROUP BY year
+ORDER BY year
+
+13. Customer Satisfication - Perfect Rating
+
+WITH review AS(
+	SELECT 
+		EXTRACT(YEAR FROM A.review_answer_timestamp) AS year ,
+		SUM(CASE WHEN A.review_score = 5 THEN 1 ELSE 0 END) AS score_5,
+		COUNT(DISTINCT A.order_id) AS count_all
+	FROM reviews AS A
+	LEFT JOIN orders AS B
+		ON A.order_id = B.order_id
+	WHERE  B.order_status = 'delivered'
+	GROUP BY year
+)
+SELECT year, 
+	   score_5,
+	   ROUND((score_5::NUMERIC / count_all::NUMERIC*100),2) AS percentage
+FROM review
+group by 1,2,3
